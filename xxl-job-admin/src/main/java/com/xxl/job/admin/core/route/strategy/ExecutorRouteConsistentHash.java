@@ -1,22 +1,20 @@
 package com.xxl.job.admin.core.route.strategy;
 
-import com.xxl.job.admin.core.route.ExecutorRouter;
-import com.xxl.job.admin.core.trigger.XxlJobTrigger;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.xxl.job.admin.core.route.ExecutorRouter;
+import com.xxl.job.admin.core.trigger.XxlJobTrigger;
+import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.handler.model.TriggerParam;
+
 /**
- * 分组下机器地址相同，不同JOB均匀散列在不同机器上，保证分组下机器分配JOB平均；且每个JOB固定调度其中一台机器；
- *      a、virtual node：解决不均衡问题
- *      b、hash method replace hashCode：String的hashCode可能重复，需要进一步扩大hashCode的取值范围
- * Created by xuxueli on 17/3/10.
+ * 分组下机器地址相同，不同JOB均匀散列在不同机器上，保证分组下机器分配JOB平均；且每个JOB固定调度其中一台机器； a、virtual node：解决不均衡问题 b、hash method replace
+ * hashCode：String的hashCode可能重复，需要进一步扩大hashCode的取值范围 Created by xuxueli on 17/3/10.
  */
 public class ExecutorRouteConsistentHash extends ExecutorRouter {
 
@@ -24,6 +22,7 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
 
     /**
      * get hash code on 2^32 ring (md5散列的方式计算hash值)
+     * 
      * @param key
      * @return
      */
@@ -48,21 +47,19 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
         byte[] digest = md5.digest();
 
         // hash code, Truncate to 32-bits
-        long hashCode = ((long) (digest[3] & 0xFF) << 24)
-                | ((long) (digest[2] & 0xFF) << 16)
-                | ((long) (digest[1] & 0xFF) << 8)
-                | (digest[0] & 0xFF);
+        long hashCode = ((long) (digest[3] & 0xFF) << 24) | ((long) (digest[2] & 0xFF) << 16)
+                | ((long) (digest[1] & 0xFF) << 8) | (digest[0] & 0xFF);
 
         long truncateHashCode = hashCode & 0xffffffffL;
         return truncateHashCode;
     }
 
-    public String route(int jobId, ArrayList<String> addressList) {
+    public String route(int jobId, List<String> addressList) {
 
         // ------A1------A2-------A3------
         // -----------J1------------------
         TreeMap<Long, String> addressRing = new TreeMap<Long, String>();
-        for (String address: addressList) {
+        for (String address : addressList) {
             for (int i = 0; i < VIRTUAL_NODE_NUM; i++) {
                 long addressHash = hash("SHARD-" + address + "-NODE-" + i);
                 addressRing.put(addressHash, address);
@@ -78,12 +75,12 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
     }
 
     @Override
-    public ReturnT<String> routeRun(TriggerParam triggerParam, ArrayList<String> addressList) {
+    public ApiResult<String> routeRun(TriggerParam triggerParam, List<String> addressList) {
         // address
         String address = route(triggerParam.getJobId(), addressList);
 
         // run executor
-        ReturnT<String> runResult = XxlJobTrigger.runExecutor(triggerParam, address);
+        ApiResult<String> runResult = XxlJobTrigger.runExecutor(triggerParam, address);
         runResult.setContent(address);
         return runResult;
     }

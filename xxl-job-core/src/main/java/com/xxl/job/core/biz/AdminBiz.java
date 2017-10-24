@@ -1,10 +1,10 @@
 package com.xxl.job.core.biz;
 
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
-
 import java.util.List;
+
+import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.handler.model.HandleCallbackParam;
+import com.xxl.job.api.handler.model.RegistryParam;
 
 /**
  * @author xuxueli 2017-07-27 21:52:49
@@ -19,7 +19,7 @@ public interface AdminBiz {
      * @param callbackParamList
      * @return
      */
-    public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList);
+    public ApiResult<String> callback(List<HandleCallbackParam> callbackParamList);
 
     /**
      * registry
@@ -27,7 +27,7 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ReturnT<String> registry(RegistryParam registryParam);
+    public ApiResult<String> registry(RegistryParam registryParam);
 
     /**
      * registry remove
@@ -35,8 +35,7 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ReturnT<String> registryRemove(RegistryParam registryParam);
-
+    public ApiResult<String> registryRemove(RegistryParam registryParam);
 
     /**
      * trigger job for once
@@ -44,6 +43,6 @@ public interface AdminBiz {
      * @param jobId
      * @return
      */
-    public ReturnT<String> triggerJob(int jobId);
+    public ApiResult<String> triggerJob(int jobId);
 
 }

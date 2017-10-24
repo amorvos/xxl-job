@@ -1,10 +1,37 @@
-# for eclipse
-/.settings/
-/.project
+# kdiff3 ignore
+*.orig
 
-# for idea
+# maven ignore
+target/
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+
+# idea ignore
+.idea/
+*.ipr
 *.iml
-/.idea
-*/target
+*.iws
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system ignore
 .DS_Store
-.gitattributes
+Thumbs.db
+*.ver
+
+# package ignore (optional)
+ver/
+versions.mapping
+# *.jar
+# *.war
+# *.zip
+# *.tar
+# *.tar.gz

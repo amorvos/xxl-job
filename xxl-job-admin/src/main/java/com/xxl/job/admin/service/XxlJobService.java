@@ -1,10 +1,9 @@
 package com.xxl.job.admin.service;
 
+import java.util.Map;
 
 import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.core.biz.model.ReturnT;
-
-import java.util.Map;
+import com.xxl.job.api.handler.model.ApiResult;
 
 /**
  * core job action for xxl-job
@@ -12,23 +11,23 @@ import java.util.Map;
  * @author xuxueli 2016-5-28 15:30:33
  */
 public interface XxlJobService {
-	
-	public Map<String, Object> pageList(int start, int length, int jobGroup, String executorHandler, String filterTime);
-	
-	public ReturnT<String> add(XxlJobInfo jobInfo);
-	
-	public ReturnT<String> reschedule(XxlJobInfo jobInfo);
-	
-	public ReturnT<String> remove(int id);
-	
-	public ReturnT<String> pause(int id);
-	
-	public ReturnT<String> resume(int id);
-	
-	public ReturnT<String> triggerJob(int id);
 
-	public Map<String,Object> dashboardInfo();
+    public Map<String, Object> pageList(int start, int length, int jobGroup, String executorHandler, String filterTime);
 
-	public ReturnT<Map<String,Object>> triggerChartDate();
+    ApiResult<String> add(XxlJobInfo jobInfo);
+
+    ApiResult<String> reschedule(XxlJobInfo jobInfo);
+
+    ApiResult<String> remove(int id);
+
+    ApiResult<String> pause(int id);
+
+    ApiResult<String> resume(int id);
+
+    ApiResult<String> triggerJob(int id);
+
+    Map<String, Object> dashboardInfo();
+
+    ApiResult<Map<String, Object>> triggerChartDate();
 
 }
