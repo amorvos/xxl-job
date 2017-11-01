@@ -60,7 +60,7 @@ public class ExecutorRegistryThread extends Thread {
                                 executorAddress);
                         for (AdminBiz adminBiz : JobExecutor.getAdminBizList()) {
                             try {
-                                ApiResult<String> registryResult = adminBiz.registry(registryParam);
+                                ApiResult registryResult = adminBiz.registry(registryParam);
                                 if (registryResult != null && ApiResult.SUCCESS_CODE == registryResult.getCode()) {
                                     registryResult = ApiResult.SUCCESS;
                                     logger.info(
@@ -94,7 +94,7 @@ public class ExecutorRegistryThread extends Thread {
                             executorAddress);
                     for (AdminBiz adminBiz : JobExecutor.getAdminBizList()) {
                         try {
-                            ApiResult<String> registryResult = adminBiz.registryRemove(registryParam);
+                            ApiResult registryResult = adminBiz.registryRemove(registryParam);
                             if (registryResult != null && ApiResult.SUCCESS_CODE == registryResult.getCode()) {
                                 registryResult = ApiResult.SUCCESS;
                                 logger.info(

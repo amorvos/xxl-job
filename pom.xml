@@ -14,7 +14,8 @@
         <module>xxl-job-api</module>
         <module>xxl-job-core</module>
         <module>xxl-job-admin</module>
-        <module>xxl-job-executor-samples</module>
+        <module>xxl-job-spring</module>
+        <module>xxl-job-demo</module>
     </modules>
 
     <properties>
@@ -49,6 +50,7 @@
 
         <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
         <xxl-job-api.version>1.9.0-SNAPSHOT</xxl-job-api.version>
+        <commons-lang3.version>3.6</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -148,11 +150,16 @@
                 <version>${groovy-all.version}</version>
             </dependency>
 
-            <!-- commons-exec -->
+            <!-- commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-exec</artifactId>
                 <version>${commons-exec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
 
             <dependency>

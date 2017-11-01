@@ -11,7 +11,7 @@ import com.xxl.job.api.model.RegistryParam;
  */
 public interface AdminBiz {
 
-    public static final String MAPPING = "/api";
+    static final String MAPPING = "/api";
 
     /**
      * callback
@@ -19,7 +19,7 @@ public interface AdminBiz {
      * @param callbackParamList
      * @return
      */
-    public ApiResult<String> callback(List<HandleCallbackParam> callbackParamList);
+    ApiResult callback(List<HandleCallbackParam> callbackParamList);
 
     /**
      * registry
@@ -27,7 +27,7 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ApiResult<String> registry(RegistryParam registryParam);
+    ApiResult registry(RegistryParam registryParam);
 
     /**
      * registry remove
@@ -35,7 +35,7 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ApiResult<String> registryRemove(RegistryParam registryParam);
+    ApiResult registryRemove(RegistryParam registryParam);
 
     /**
      * trigger job for once
@@ -43,6 +43,6 @@ public interface AdminBiz {
      * @param jobId
      * @return
      */
-    public ApiResult<String> triggerJob(int jobId);
+    ApiResult triggerJob(int jobId);
 
 }

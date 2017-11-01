@@ -39,7 +39,7 @@ public class AdminBizImpl implements AdminBiz {
     private XxlJobService xxlJobService;
 
     @Override
-    public ApiResult<String> callback(List<HandleCallbackParam> callbackParamList) {
+    public ApiResult callback(List<HandleCallbackParam> callbackParamList) {
         for (HandleCallbackParam handleCallbackParam : callbackParamList) {
             ApiResult<String> callbackResult = callback(handleCallbackParam);
             logger.info("JobApiController.callback {}, handleCallbackParam={}, callbackResult={}",
@@ -50,7 +50,7 @@ public class AdminBizImpl implements AdminBiz {
         return ApiResult.SUCCESS;
     }
 
-    private ApiResult<String> callback(HandleCallbackParam handleCallbackParam) {
+    private ApiResult callback(HandleCallbackParam handleCallbackParam) {
         // valid log item
         XxlJobLog log = xxlJobLogDao.load(handleCallbackParam.getLogId());
         if (log == null) {
@@ -105,7 +105,7 @@ public class AdminBizImpl implements AdminBiz {
     }
 
     @Override
-    public ApiResult<String> registry(RegistryParam registryParam) {
+    public ApiResult registry(RegistryParam registryParam) {
         int ret = xxlJobRegistryDao.registryUpdate(registryParam.getRegistGroup(), registryParam.getRegistryKey(),
                 registryParam.getRegistryValue());
         if (ret < 1) {
@@ -116,14 +116,14 @@ public class AdminBizImpl implements AdminBiz {
     }
 
     @Override
-    public ApiResult<String> registryRemove(RegistryParam registryParam) {
+    public ApiResult registryRemove(RegistryParam registryParam) {
         xxlJobRegistryDao.registryDelete(registryParam.getRegistGroup(), registryParam.getRegistryKey(),
                 registryParam.getRegistryValue());
         return ApiResult.SUCCESS;
     }
 
     @Override
-    public ApiResult<String> triggerJob(int jobId) {
+    public ApiResult triggerJob(int jobId) {
         return xxlJobService.triggerJob(jobId);
     }
 

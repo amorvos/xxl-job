@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.xxl.com/schema/schedule"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.xxl.com/schema/schedule"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:import namespace="http://www.springframework.org/schema/tool"/>
+
+
+    <xsd:element name="config">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[ Schedule的配置节点 ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="host" type="xsd:string" use="optional" default="127.0.0.1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[host默认是本地调试模式]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="port" type="xsd:string" use="optional" default="9999">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[ 接收调度通知的端口，默认是9999 ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="adminAddresses" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[ 注册中心地址 ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="appName" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[appName ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="logPath" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[logPath ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="accessToken" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[accessToken ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

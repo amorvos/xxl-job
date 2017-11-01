@@ -30,8 +30,8 @@ Thumbs.db
 # package ignore (optional)
 ver/
 versions.mapping
-# *.jar
-# *.war
-# *.zip
-# *.tar
-# *.tar.gz
+ *.jar
+ *.war
+ *.zip
+ *.tar
+ *.tar.gz
