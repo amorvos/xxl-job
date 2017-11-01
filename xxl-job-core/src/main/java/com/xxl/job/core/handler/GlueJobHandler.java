@@ -1,7 +1,7 @@
 package com.xxl.job.core.handler;
 
-import com.xxl.job.api.handler.api.JobHandler;
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.api.JobHandler;
+import com.xxl.job.api.model.ApiResult;
 import com.xxl.job.core.log.XxlJobLogger;
 
 /**

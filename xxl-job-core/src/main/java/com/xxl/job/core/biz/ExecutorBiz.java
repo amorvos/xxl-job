@@ -1,8 +1,8 @@
 package com.xxl.job.core.biz;
 
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.LogResult;
-import com.xxl.job.api.handler.model.TriggerParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.LogResult;
+import com.xxl.job.api.model.TriggerParam;
 
 /**
  * Created by xuxueli on 17/3/1.
@@ -11,7 +11,7 @@ public interface ExecutorBiz {
 
     /**
      * beat
-     * 
+     *
      * @return
      */
     ApiResult<String> beat();
@@ -30,7 +30,7 @@ public interface ExecutorBiz {
      * @param jobId
      * @return
      */
-    ApiResult<String> kill(int jobId);
+    boolean kill(int jobId);
 
     /**
      * log

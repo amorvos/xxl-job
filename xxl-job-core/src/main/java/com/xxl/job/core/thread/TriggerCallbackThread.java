@@ -7,8 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.HandleCallbackParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.HandleCallbackParam;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.executor.JobExecutor;
 

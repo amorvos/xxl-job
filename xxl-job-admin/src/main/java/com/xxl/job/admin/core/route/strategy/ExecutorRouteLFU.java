@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.xxl.job.admin.core.route.ExecutorRouter;
 import com.xxl.job.admin.core.trigger.XxlJobTrigger;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.TriggerParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.TriggerParam;
 
 /**
  * 单个JOB对应的每个执行器，使用频率最低的优先被选举 a(*)、LFU(Least Frequently Used)：最不经常使用，频率/次数 b、LRU(Least Recently Used)：最近最久未使用，时间

@@ -3,10 +3,10 @@ package com.xxl.job.dao.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.RegistryParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.RegistryParam;
 import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.enums.RegistryConfig;
+import com.xxl.job.core.enums.RegistType;
 import com.xxl.job.core.rpc.netcom.NetComClientProxy;
 
 /**
@@ -30,8 +30,8 @@ public class AdminBizTest {
         AdminBiz adminBiz = (AdminBiz) new NetComClientProxy(AdminBiz.class, addressUrl, accessToken).getObject();
 
         // test executor registry
-        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(),
-                "xxl-job-executor-example", "127.0.0.1:9999");
+        RegistryParam registryParam = new RegistryParam(RegistType.EXECUTOR.name(), "xxl-job-executor-example",
+                "127.0.0.1:9999");
         ApiResult<String> ApiResult = adminBiz.registry(registryParam);
         Assert.assertTrue(ApiResult.getCode() == ApiResult.SUCCESS_CODE);
     }
@@ -46,8 +46,8 @@ public class AdminBizTest {
         AdminBiz adminBiz = (AdminBiz) new NetComClientProxy(AdminBiz.class, addressUrl, accessToken).getObject();
 
         // test executor registry remove
-        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(),
-                "xxl-job-executor-example", "127.0.0.1:9999");
+        RegistryParam registryParam = new RegistryParam(RegistType.EXECUTOR.name(), "xxl-job-executor-example",
+                "127.0.0.1:9999");
         ApiResult<String> ApiResult = adminBiz.registryRemove(registryParam);
         Assert.assertTrue(ApiResult.getCode() == ApiResult.SUCCESS_CODE);
     }

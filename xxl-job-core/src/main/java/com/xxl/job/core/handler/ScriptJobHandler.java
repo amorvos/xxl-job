@@ -1,8 +1,8 @@
 package com.xxl.job.core.handler;
 
-import com.xxl.job.api.handler.api.JobHandler;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.core.glue.GlueTypeEnum;
+import com.xxl.job.api.api.JobHandler;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.core.glue.GlueType;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.log.XxlJobLogger;
 import com.xxl.job.core.util.ScriptUtil;
@@ -15,9 +15,9 @@ public class ScriptJobHandler extends JobHandler {
     private int jobId;
     private long glueUpdatetime;
     private String gluesource;
-    private GlueTypeEnum glueType;
+    private GlueType glueType;
 
-    public ScriptJobHandler(int jobId, long glueUpdatetime, String gluesource, GlueTypeEnum glueType) {
+    public ScriptJobHandler(int jobId, long glueUpdatetime, String gluesource, GlueType glueType) {
         this.jobId = jobId;
         this.glueUpdatetime = glueUpdatetime;
         this.gluesource = gluesource;
@@ -34,15 +34,15 @@ public class ScriptJobHandler extends JobHandler {
         // cmd + script-file-name
         String cmd = "bash";
         String scriptFileName = null;
-        if (GlueTypeEnum.GLUE_SHELL == glueType) {
+        if (GlueType.GLUE_SHELL == glueType) {
             cmd = "bash";
             scriptFileName = XxlJobFileAppender.logPath.concat("gluesource/").concat(String.valueOf(jobId)).concat("_")
                     .concat(String.valueOf(glueUpdatetime)).concat(".sh");
-        } else if (GlueTypeEnum.GLUE_PYTHON == glueType) {
+        } else if (GlueType.GLUE_PYTHON == glueType) {
             cmd = "python";
             scriptFileName = XxlJobFileAppender.logPath.concat("gluesource/").concat(String.valueOf(jobId)).concat("_")
                     .concat(String.valueOf(glueUpdatetime)).concat(".py");
-        } else if (GlueTypeEnum.GLUE_NODEJS == glueType) {
+        } else if (GlueType.GLUE_NODEJS == glueType) {
             cmd = "node";
             scriptFileName = XxlJobFileAppender.logPath.concat("gluesource/").concat(String.valueOf(jobId)).concat("_")
                     .concat(String.valueOf(glueUpdatetime)).concat(".js");

@@ -18,7 +18,7 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.schedule.XxlJobDynamicScheduler;
 import com.xxl.job.admin.core.util.MailUtil;
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.model.ApiResult;
 
 /**
  * job monitor instance

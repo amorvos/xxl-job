@@ -3,7 +3,7 @@ package com.xxl.job.admin.service;
 import java.util.Map;
 
 import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.model.ApiResult;
 
 /**
  * core job action for xxl-job
@@ -12,7 +12,7 @@ import com.xxl.job.api.handler.model.ApiResult;
  */
 public interface XxlJobService {
 
-    public Map<String, Object> pageList(int start, int length, int jobGroup, String executorHandler, String filterTime);
+    Map<String, Object> pageList(int start, int length, int jobGroup, String executorHandler, String filterTime);
 
     ApiResult<String> add(XxlJobInfo jobInfo);
 
@@ -28,6 +28,6 @@ public interface XxlJobService {
 
     Map<String, Object> dashboardInfo();
 
-    ApiResult<Map<String, Object>> triggerChartDate();
+    Map<String, Object> triggerChartDate();
 
 }

@@ -17,9 +17,9 @@ import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.admin.dao.XxlJobRegistryDao;
 import com.xxl.job.admin.service.XxlJobService;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.HandleCallbackParam;
-import com.xxl.job.api.handler.model.RegistryParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.HandleCallbackParam;
+import com.xxl.job.api.model.RegistryParam;
 import com.xxl.job.core.biz.AdminBiz;
 
 /**

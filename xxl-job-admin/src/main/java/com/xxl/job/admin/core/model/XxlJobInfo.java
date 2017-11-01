@@ -44,7 +44,7 @@ public class XxlJobInfo {
 		this.id = id;
 	}
 
-	public int getJobGroup() {
+	public Integer getJobGroup() {
 		return jobGroup;
 	}
 

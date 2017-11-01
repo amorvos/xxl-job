@@ -1,10 +1,14 @@
 package com.xxl.job.admin.core.model;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * Created by xuxueli on 16/9/30.
@@ -12,14 +16,25 @@ import java.util.List;
 public class XxlJobGroup {
 
     private int id;
+
+    @Valid
+    @NotBlank(message = "AppName不能为空")
+    @Length(max = 64, message = "AppName长度限制为4~64")
     private String appName;
+
+    @Valid
+    @NotBlank(message = "title不能为空")
     private String title;
+
     private int order;
-    private int addressType;    // 执行器地址类型：0=自动注册、1=手动录入
-    private String addressList;    // 执行器地址列表，多地址逗号分隔(手动录入)
+
+    private int addressType; // 执行器地址类型：0=自动注册、1=手动录入
+
+    private String addressList; // 执行器地址列表，多地址逗号分隔(手动录入)
 
     // registry list
-    private List<String> registryList;  // 执行器地址列表(系统注册)
+    private List<String> registryList; // 执行器地址列表(系统注册)
+
     public List<String> getRegistryList() {
         if (StringUtils.isNotBlank(addressList)) {
             registryList = new ArrayList<String>(Arrays.asList(addressList.split(",")));

@@ -14,8 +14,8 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLogGlue;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogGlueDao;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.core.glue.GlueTypeEnum;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.core.glue.GlueType;
 
 /**
  * job code controller
@@ -39,12 +39,12 @@ public class JobCodeController {
         if (jobInfo == null) {
             throw new RuntimeException("抱歉，任务不存在.");
         }
-        if (GlueTypeEnum.BEAN == GlueTypeEnum.match(jobInfo.getGlueType())) {
+        if (GlueType.BEAN == GlueType.match(jobInfo.getGlueType())) {
             throw new RuntimeException("该任务非GLUE模式.");
         }
 
         // Glue类型-字典
-        model.addAttribute("GlueTypeEnum", GlueTypeEnum.values());
+        model.addAttribute("GlueTypeEnum", GlueType.values());
 
         model.addAttribute("jobInfo", jobInfo);
         model.addAttribute("jobLogGlues", jobLogGlues);
@@ -53,35 +53,31 @@ public class JobCodeController {
 
     @RequestMapping("/save")
     @ResponseBody
-    public ApiResult<String> save(Model model, int id, String glueSource, String glueRemark) {
+    public ApiResult save(Model model, int id, String glueSource, String glueRemark) {
         // valid
         if (glueRemark == null) {
-            return new ApiResult<String>(500, "请输入备注");
+            return ApiResult.FAIL.setMsg("请输入备注");
         }
         if (glueRemark.length() < 4 || glueRemark.length() > 100) {
-            return new ApiResult<String>(500, "备注长度应该在4至100之间");
+            return ApiResult.FAIL.setMsg("备注长度应该在4至100之间");
         }
-        XxlJobInfo exists_jobInfo = xxlJobInfoDao.loadById(id);
-        if (exists_jobInfo == null) {
-            return new ApiResult<String>(500, "参数异常");
+        XxlJobInfo jobInfo = xxlJobInfoDao.loadById(id);
+        if (jobInfo == null) {
+            return ApiResult.FAIL.setMsg("参数异常");
         }
 
-        // update new code
-        exists_jobInfo.setGlueSource(glueSource);
-        exists_jobInfo.setGlueRemark(glueRemark);
-        exists_jobInfo.setGlueUpdatetime(new Date());
-        xxlJobInfoDao.update(exists_jobInfo);
+        jobInfo.setGlueSource(glueSource);
+        jobInfo.setGlueRemark(glueRemark);
+        jobInfo.setGlueUpdatetime(new Date());
+        xxlJobInfoDao.update(jobInfo);
 
-        // log old code
         XxlJobLogGlue xxlJobLogGlue = new XxlJobLogGlue();
-        xxlJobLogGlue.setJobId(exists_jobInfo.getId());
-        xxlJobLogGlue.setGlueType(exists_jobInfo.getGlueType());
+        xxlJobLogGlue.setJobId(jobInfo.getId());
+        xxlJobLogGlue.setGlueType(jobInfo.getGlueType());
         xxlJobLogGlue.setGlueSource(glueSource);
         xxlJobLogGlue.setGlueRemark(glueRemark);
         xxlJobLogGlueDao.save(xxlJobLogGlue);
-
-        // remove code backup more than 30
-        xxlJobLogGlueDao.removeOld(exists_jobInfo.getId(), 30);
+        xxlJobLogGlueDao.removeOld(jobInfo.getId(), 30);
 
         return ApiResult.SUCCESS;
     }

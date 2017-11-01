@@ -7,14 +7,14 @@ import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.xxl.job.api.handler.model.HandleCallbackParam;
+import com.xxl.job.api.model.HandleCallbackParam;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xxl.job.api.handler.api.JobHandler;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.TriggerParam;
+import com.xxl.job.api.api.JobHandler;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.TriggerParam;
 import com.xxl.job.core.executor.JobExecutor;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.log.XxlJobLogger;
@@ -52,11 +52,11 @@ public class JobThread extends Thread {
      * @param triggerParam
      * @return
      */
-    public ApiResult<String> pushTriggerQueue(TriggerParam triggerParam) {
+    public ApiResult pushTriggerQueue(TriggerParam triggerParam) {
         // avoid repeat
         if (triggerLogIdSet.contains(triggerParam.getLogId())) {
             logger.debug("repeate trigger job, logId:{}", triggerParam.getLogId());
-            return new ApiResult<>(ApiResult.FAIL_CODE, "repeate trigger job, logId:" + triggerParam.getLogId());
+            return ApiResult.FAIL.setMsg("repeate trigger job, logId:" + triggerParam.getLogId());
         }
 
         triggerLogIdSet.add(triggerParam.getLogId());
@@ -175,7 +175,8 @@ public class JobThread extends Thread {
             TriggerParam triggerParam = triggerQueue.poll();
             if (triggerParam != null) {
                 // is killed
-                ApiResult<String> stopResult = new ApiResult<String>(ApiResult.FAIL_CODE, stopReason + " [任务尚未执行，在调度队列中被终止]");
+                ApiResult<String> stopResult = new ApiResult<String>(ApiResult.FAIL_CODE,
+                        stopReason + " [任务尚未执行，在调度队列中被终止]");
                 TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), stopResult));
             }
         }

@@ -10,7 +10,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.model.ApiResult;
 import com.xxl.job.core.util.JacksonUtil;
 
 /**

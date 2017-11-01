@@ -25,8 +25,8 @@ import com.xxl.job.admin.core.schedule.XxlJobDynamicScheduler;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.LogResult;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.LogResult;
 import com.xxl.job.core.biz.ExecutorBiz;
 
 /**
@@ -37,36 +37,33 @@ import com.xxl.job.core.biz.ExecutorBiz;
 @Controller
 @RequestMapping("/joblog")
 public class JobLogController {
-    private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
+
+    private static Logger LOGGER = LoggerFactory.getLogger(JobLogController.class);
 
     @Resource
     private XxlJobGroupDao xxlJobGroupDao;
+
     @Resource
-    public XxlJobInfoDao xxlJobInfoDao;
+    private XxlJobInfoDao xxlJobInfoDao;
+
     @Resource
-    public XxlJobLogDao xxlJobLogDao;
+    private XxlJobLogDao xxlJobLogDao;
 
     @RequestMapping
     public String index(Model model, @RequestParam(required = false, defaultValue = "0") Integer jobId) {
-
-        // 执行器列表
         List<XxlJobGroup> jobGroupList = xxlJobGroupDao.findAll();
         model.addAttribute("JobGroupList", jobGroupList);
-
-        // 任务
         if (jobId > 0) {
             XxlJobInfo jobInfo = xxlJobInfoDao.loadById(jobId);
             model.addAttribute("jobInfo", jobInfo);
         }
-
         return "joblog/joblog.index";
     }
 
     @RequestMapping("/getJobsByGroup")
     @ResponseBody
-    public ApiResult<List<XxlJobInfo>> getJobsByGroup(int jobGroup) {
-        List<XxlJobInfo> list = xxlJobInfoDao.getJobsByGroup(jobGroup);
-        return new ApiResult<List<XxlJobInfo>>(list);
+    public ApiResult getJobsByGroup(int jobGroup) {
+        return ApiResult.SUCCESS.setContent(xxlJobInfoDao.getJobsByGroup(jobGroup));
     }
 
     @RequestMapping("/pageList")
@@ -80,34 +77,29 @@ public class JobLogController {
         Date triggerTimeEnd = null;
         if (StringUtils.isNotBlank(filterTime)) {
             String[] temp = filterTime.split(" - ");
-            if (temp != null && temp.length == 2) {
+            if (temp.length == 2) {
                 try {
                     triggerTimeStart = DateUtils.parseDate(temp[0], new String[] { "yyyy-MM-dd HH:mm:ss" });
                     triggerTimeEnd = DateUtils.parseDate(temp[1], new String[] { "yyyy-MM-dd HH:mm:ss" });
                 } catch (ParseException e) {
+                    LOGGER.error("时间格式解析出错", e);
                 }
             }
         }
-
         // page query
         List<XxlJobLog> list = xxlJobLogDao.pageList(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd,
                 logStatus);
-        int list_count = xxlJobLogDao.pageListCount(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd,
+        int count = xxlJobLogDao.pageListCount(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd,
                 logStatus);
-
-        // package result
-        Map<String, Object> maps = new HashMap<String, Object>();
-        maps.put("recordsTotal", list_count); // 总记录数
-        maps.put("recordsFiltered", list_count); // 过滤后的总记录数
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("recordsTotal", count); // 总记录数
+        maps.put("recordsFiltered", count); // 过滤后的总记录数
         maps.put("data", list); // 分页列表
         return maps;
     }
 
     @RequestMapping("/logDetailPage")
     public String logDetailPage(int id, Model model) {
-
-        // base check
-        ApiResult<String> logStatue = ApiResult.SUCCESS;
         XxlJobLog jobLog = xxlJobLogDao.load(id);
         if (jobLog == null) {
             throw new RuntimeException("抱歉，日志ID非法.");
@@ -123,7 +115,7 @@ public class JobLogController {
 
     @RequestMapping("/logDetailCat")
     @ResponseBody
-    public ApiResult<LogResult> logDetailCat(String executorAddress, long triggerTime, int logId, int fromLineNum) {
+    public ApiResult logDetailCat(String executorAddress, long triggerTime, int logId, int fromLineNum) {
         try {
             ExecutorBiz executorBiz = XxlJobDynamicScheduler.getExecutorBiz(executorAddress);
             ApiResult<LogResult> logResult = executorBiz.log(triggerTime, logId, fromLineNum);
@@ -139,48 +131,47 @@ public class JobLogController {
 
             return logResult;
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return new ApiResult<LogResult>(ApiResult.FAIL_CODE, e.getMessage());
+            LOGGER.error(e.getMessage(), e);
+            return ApiResult.FAIL.setMsg(e.getMessage());
         }
     }
 
     @RequestMapping("/logKill")
     @ResponseBody
-    public ApiResult<String> logKill(int id) {
+    public ApiResult logKill(int id) {
         // base check
         XxlJobLog log = xxlJobLogDao.load(id);
         XxlJobInfo jobInfo = xxlJobInfoDao.loadById(log.getJobId());
         if (jobInfo == null) {
-            return new ApiResult<String>(500, "参数异常");
+            return ApiResult.FAIL.setMsg("参数异常");
         }
         if (ApiResult.SUCCESS_CODE != log.getTriggerCode()) {
-            return new ApiResult<String>(500, "调度失败，无法终止日志");
+            return ApiResult.FAIL.setMsg("调度失败，无法终止日志");
         }
 
         // request of kill
-        ApiResult<String> runResult = null;
+        boolean runResult = false;
         try {
             ExecutorBiz executorBiz = XxlJobDynamicScheduler.getExecutorBiz(log.getExecutorAddress());
             runResult = executorBiz.kill(jobInfo.getId());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            runResult = new ApiResult<String>(500, e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
 
-        if (ApiResult.SUCCESS_CODE == runResult.getCode()) {
-            log.setHandleCode(ApiResult.FAIL_CODE);
-            log.setHandleMsg("人为操作主动终止:" + (runResult.getMsg() != null ? runResult.getMsg() : ""));
+        if (runResult) {
+            log.setHandleCode(ApiResult.SUCCESS_CODE);
+            log.setHandleMsg("人为操作主动终止成功");
             log.setHandleTime(new Date());
             xxlJobLogDao.updateHandleInfo(log);
-            return new ApiResult<String>(runResult.getMsg());
+            return ApiResult.SUCCESS;
         } else {
-            return new ApiResult<String>(500, runResult.getMsg());
+            return ApiResult.FAIL;
         }
     }
 
     @RequestMapping("/clearLog")
     @ResponseBody
-    public ApiResult<String> clearLog(int jobGroup, int jobId, int type) {
+    public ApiResult clearLog(int jobGroup, int jobId, int type) {
 
         Date clearBeforeTime = null;
         int clearBeforeNum = 0;
@@ -203,7 +194,7 @@ public class JobLogController {
         } else if (type == 9) {
             clearBeforeNum = 0; // 清理所有日志数据
         } else {
-            return new ApiResult<String>(ApiResult.FAIL_CODE, "清理类型参数异常");
+            return ApiResult.FAIL.setMsg("清理类型参数异常");
         }
 
         xxlJobLogDao.clearLog(jobGroup, jobId, clearBeforeTime, clearBeforeNum);

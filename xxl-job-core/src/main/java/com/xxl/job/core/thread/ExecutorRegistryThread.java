@@ -5,10 +5,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.RegistryParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.RegistryParam;
 import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.enums.RegistryConfig;
+import com.xxl.job.core.constants.RegistryConstants;
+import com.xxl.job.core.enums.RegistType;
 import com.xxl.job.core.executor.JobExecutor;
 import com.xxl.job.core.util.IpUtil;
 
@@ -16,6 +17,7 @@ import com.xxl.job.core.util.IpUtil;
  * Created by xuxueli on 17/3/2.
  */
 public class ExecutorRegistryThread extends Thread {
+
     private static Logger logger = LoggerFactory.getLogger(ExecutorRegistryThread.class);
 
     private static ExecutorRegistryThread instance = new ExecutorRegistryThread();
@@ -54,8 +56,8 @@ public class ExecutorRegistryThread extends Thread {
                 // registry
                 while (!toStop) {
                     try {
-                        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(),
-                                appName, executorAddress);
+                        RegistryParam registryParam = new RegistryParam(RegistType.EXECUTOR.name(), appName,
+                                executorAddress);
                         for (AdminBiz adminBiz : JobExecutor.getAdminBizList()) {
                             try {
                                 ApiResult<String> registryResult = adminBiz.registry(registryParam);
@@ -80,7 +82,7 @@ public class ExecutorRegistryThread extends Thread {
                     }
 
                     try {
-                        TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
+                        TimeUnit.SECONDS.sleep(RegistryConstants.BEAT_TIMEOUT);
                     } catch (InterruptedException e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -88,7 +90,7 @@ public class ExecutorRegistryThread extends Thread {
 
                 // registry remove
                 try {
-                    RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName,
+                    RegistryParam registryParam = new RegistryParam(RegistType.EXECUTOR.name(), appName,
                             executorAddress);
                     for (AdminBiz adminBiz : JobExecutor.getAdminBizList()) {
                         try {

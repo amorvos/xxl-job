@@ -2,9 +2,9 @@ package com.xxl.job.executor.service.jobhandler;
 
 import org.springframework.stereotype.Service;
 
-import com.xxl.job.api.handler.annotation.Schedule;
-import com.xxl.job.api.handler.api.JobHandler;
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.annotation.Schedule;
+import com.xxl.job.api.api.JobHandler;
+import com.xxl.job.api.model.ApiResult;
 import com.xxl.job.core.log.XxlJobLogger;
 import com.xxl.job.core.util.ShardingUtil;
 
@@ -33,7 +33,7 @@ public class ShardingJobHandler extends JobHandler {
             }
         }
 
-        return ApiResult.SUCCESS;
+            return ApiResult.SUCCESS;
     }
 
 }

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cglib.reflect.FastClass;
 import org.springframework.cglib.reflect.FastMethod;
 
-import com.xxl.job.api.handler.model.ApiResult;
+import com.xxl.job.api.model.ApiResult;
 import com.xxl.job.core.rpc.codec.RpcRequest;
 import com.xxl.job.core.rpc.codec.RpcResponse;
 import com.xxl.job.core.rpc.netcom.jetty.server.JettyServer;
@@ -22,24 +22,11 @@ public class NetComServerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetComServerFactory.class);
 
-    // ---------------------- server start ----------------------
-    private JettyServer server = new JettyServer();
+    private static Map<String, Object> serviceMap = new HashMap<>();
 
-    public void start(int port, String ip, String appName) throws Exception {
-        server.start(port, ip, appName);
-    }
-
-    // ---------------------- server destroy ----------------------
-    public void destroy() {
-        server.destroy();
-    }
-
-    // ---------------------- server instance ----------------------
-    /**
-     * init local rpc service map
-     */
-    private static Map<String, Object> serviceMap = new HashMap<String, Object>();
     private static String accessToken;
+
+    private JettyServer server = new JettyServer();
 
     public static void putService(Class<?> iface, Object serviceBean) {
         serviceMap.put(iface.getName(), serviceBean);
@@ -49,14 +36,8 @@ public class NetComServerFactory {
         NetComServerFactory.accessToken = accessToken;
     }
 
-    public static RpcResponse invokeService(RpcRequest request, Object serviceBean) {
-        if (serviceBean == null) {
-            serviceBean = serviceMap.get(request.getClassName());
-        }
-        if (serviceBean == null) {
-            // TODO
-        }
-
+    public static RpcResponse invokeService(RpcRequest request) {
+        Object serviceBean = serviceMap.get(request.getClassName());
         RpcResponse response = new RpcResponse();
 
         if (System.currentTimeMillis() - request.getCreateMillisTime() > 180000) {
@@ -83,12 +64,20 @@ public class NetComServerFactory {
             Object result = serviceFastMethod.invoke(serviceBean, parameters);
 
             response.setResult(result);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            response.setError(t.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("任务执行异常", e);
+            response.setError(e.getMessage());
         }
 
         return response;
+    }
+
+    public void start(int port, String host, String appName) throws Exception {
+        server.start(port, host, appName);
+    }
+
+    public void destroy() {
+        server.destroy();
     }
 
 }

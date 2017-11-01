@@ -13,7 +13,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xxl.job.api.handler.model.LogResult;
+import com.xxl.job.api.model.LogResult;
 
 /**
  * store trigger log in each log-file

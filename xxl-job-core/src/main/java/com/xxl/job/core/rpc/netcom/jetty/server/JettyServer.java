@@ -1,7 +1,5 @@
 package com.xxl.job.core.rpc.netcom.jetty.server;
 
-import com.xxl.job.core.thread.ExecutorRegistryThread;
-import com.xxl.job.core.thread.TriggerCallbackThread;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -11,82 +9,101 @@ import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xxl.job.core.thread.ExecutorRegistryThread;
+import com.xxl.job.core.thread.TriggerCallbackThread;
+
 /**
  * rpc jetty server
+ * 
  * @author xuxueli 2015-11-19 22:29:03
  */
+@SuppressWarnings("unchecked")
 public class JettyServer {
-	private static final Logger logger = LoggerFactory.getLogger(JettyServer.class);
 
-	private Server server;
-	private Thread thread;
-	public void start(final int port, final String ip, final String appName) throws Exception {
-		thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettyServer.class);
 
-				// The Server
-				server = new Server(new ExecutorThreadPool());  // 非阻塞
+    private Server server;
 
-				// HTTP connector
-				ServerConnector connector = new ServerConnector(server);
-				if (ip!=null && ip.trim().length()>0) {
-					connector.setHost(ip);	// The network interface this connector binds to as an IP address or a hostname.  If null or 0.0.0.0, then bind to all interfaces.
-				}
-				connector.setPort(port);
-				server.setConnectors(new Connector[]{connector});
+    private Thread thread;
 
-				// Set a handler
-				HandlerCollection handlerc =new HandlerCollection();
-				handlerc.setHandlers(new Handler[]{new JettyServerHandler()});
-				server.setHandler(handlerc);
+    public void start(final int port, final String host, final String appName) {
+        thread = new Thread(new ConnectRunner(appName, host, port));
+        thread.setDaemon(true);
+        thread.start();
+    }
 
-				try {
-					// Start server
-					server.start();
-					logger.info(">>>>>>>>>>>> xxl-job jetty server start success at port:{}.", port);
+    public void destroy() {
+        // destroy Registry-Server
+        ExecutorRegistryThread.getInstance().toStop();
 
-					// Start Registry-Server
-					ExecutorRegistryThread.getInstance().start(port, ip, appName);
+        // destroy Callback-Server
+        TriggerCallbackThread.getInstance().toStop();
 
-					// Start Callback-Server
-					TriggerCallbackThread.getInstance().start();
+        // destroy server
+        if (server != null) {
+            try {
+                server.stop();
+                server.destroy();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        if (thread.isAlive()) {
+            thread.interrupt();
+        }
+        LOGGER.info(">>>>>>>>>>> xxl-rpc server destroy success, netcon={}", JettyServer.class.getName());
+    }
 
-					server.join();	// block until thread stopped
-					logger.info(">>>>>>>>>>> xxl-rpc server join success, netcon={}, port={}", JettyServer.class.getName(), port);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				} finally {
-					//destroy();
-				}
-			}
-		});
-		thread.setDaemon(true);	// daemon, service jvm, user thread leave >>> daemon leave >>> jvm leave
-		thread.start();
-	}
+    class ConnectRunner implements Runnable {
 
-	public void destroy() {
+        private String appName;
 
-		// destroy Registry-Server
-		ExecutorRegistryThread.getInstance().toStop();
+        private String host;
 
-		// destroy Callback-Server
-		TriggerCallbackThread.getInstance().toStop();
+        private int port;
 
-		// destroy server
-		if (server != null) {
-			try {
-				server.stop();
-				server.destroy();
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-		if (thread.isAlive()) {
-			thread.interrupt();
-		}
+        ConnectRunner(String appName, String host, int port) {
+            this.appName = appName;
+            this.host = host;
+            this.port = port;
+        }
 
-		logger.info(">>>>>>>>>>> xxl-rpc server destroy success, netcon={}", JettyServer.class.getName());
-	}
+        @Override
+        public void run() {
+            // The Server
+            server = new Server(new ExecutorThreadPool()); // 非阻塞
+
+            // HTTP connector
+            ServerConnector connector = new ServerConnector(server);
+            if (host != null && host.trim().length() > 0) {
+                connector.setHost(host);
+            }
+            connector.setPort(port);
+            server.setConnectors(new Connector[] { connector });
+
+            // Set a handler
+            HandlerCollection handlerc = new HandlerCollection();
+            handlerc.setHandlers(new Handler[] { new JettyServerHandler() });
+            server.setHandler(handlerc);
+
+            try {
+                // Start server
+                server.start();
+                LOGGER.info(">>>>>>>>>>>> xxl-job jetty server start success at port:{}.", port);
+
+                // Start Registry-Server
+                ExecutorRegistryThread.getInstance().start(port, host, appName);
+
+                // Start Callback-Server
+                TriggerCallbackThread.getInstance().start();
+
+                server.join(); // block until thread stopped
+                LOGGER.info(">>>>>>>>>>> xxl-rpc server join success, netcon={}, port={}", JettyServer.class.getName(),
+                        port);
+            } catch (Exception e) {
+                LOGGER.error("构建本地监听服务失败", e);
+            }
+        }
+    }
 
 }

@@ -19,15 +19,15 @@ import com.xxl.job.core.rpc.netcom.jetty.client.JettyClient;
  */
 public class NetComClientProxy implements FactoryBean<Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(NetComClientProxy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetComClientProxy.class);
 
-    private Class<?> clazz;
+    private JettyClient client = new JettyClient();
 
     private String serverAddress;
 
     private String accessToken;
 
-    private JettyClient client = new JettyClient();
+    private Class<?> clazz;
 
     public NetComClientProxy(Class<?> clazz, String serverAddress, String accessToken) {
         this.clazz = clazz;
@@ -44,7 +44,7 @@ public class NetComClientProxy implements FactoryBean<Object> {
 
                         // filter method like "Object.toString()"
                         if (Object.class.getName().equals(method.getDeclaringClass().getName())) {
-                            logger.error(">>>>>>>>>>> xxl-rpc proxy class-method not support [{}.{}]",
+                            LOGGER.error(">>>>>>>>>>> xxl-rpc proxy class-method not support [{}.{}]",
                                     method.getDeclaringClass().getName(), method.getName());
                             throw new RuntimeException("xxl-rpc proxy class-method not support");
                         }
@@ -64,7 +64,7 @@ public class NetComClientProxy implements FactoryBean<Object> {
 
                         // valid response
                         if (response == null) {
-                            logger.error(">>>>>>>>>>> xxl-rpc netty response not found.");
+                            LOGGER.error(">>>>>>>>>>> xxl-rpc netty response not found.");
                             throw new Exception(">>>>>>>>>>> xxl-rpc netty response not found.");
                         }
                         if (response.isError()) {
@@ -72,7 +72,6 @@ public class NetComClientProxy implements FactoryBean<Object> {
                         } else {
                             return response.getResult();
                         }
-
                     }
                 });
     }

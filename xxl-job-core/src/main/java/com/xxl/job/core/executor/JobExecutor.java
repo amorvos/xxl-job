@@ -11,8 +11,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.google.common.collect.Lists;
-import com.xxl.job.api.handler.annotation.Schedule;
-import com.xxl.job.api.handler.api.JobHandler;
+import com.xxl.job.api.annotation.Schedule;
+import com.xxl.job.api.api.JobHandler;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.impl.DefaultExecutorBiz;
@@ -129,10 +129,10 @@ public class JobExecutor implements ApplicationContextAware {
         }
     }
 
-    private void initExecutorServer(int port, String ip, String appName, String accessToken) throws Exception {
+    private void initExecutorServer(int port, String host, String appName, String accessToken) throws Exception {
         NetComServerFactory.putService(ExecutorBiz.class, new DefaultExecutorBiz());
         NetComServerFactory.setAccessToken(accessToken);
-        serverFactory.start(port, ip, appName);
+        serverFactory.start(port, host, appName);
     }
 
     public static JobHandler loadJobHandler(String name) {

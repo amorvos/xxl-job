@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.xxl.job.admin.core.route.ExecutorRouter;
 import com.xxl.job.admin.core.schedule.XxlJobDynamicScheduler;
 import com.xxl.job.admin.core.trigger.XxlJobTrigger;
-import com.xxl.job.api.handler.model.ApiResult;
-import com.xxl.job.api.handler.model.TriggerParam;
+import com.xxl.job.api.model.ApiResult;
+import com.xxl.job.api.model.TriggerParam;
 import com.xxl.job.core.biz.ExecutorBiz;
 
 /**
