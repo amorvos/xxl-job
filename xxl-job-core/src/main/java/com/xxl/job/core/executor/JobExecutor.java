@@ -30,7 +30,7 @@ public class JobExecutor {
 
     private static ConcurrentHashMap<String, JobHandler> jobHandlerRepository = new ConcurrentHashMap<>();
 
-    private static ConcurrentHashMap<Integer, JobThread> JobThreadRepository = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<>();
 
     private static List<AdminBiz> adminBizList = Lists.newArrayList();
 
@@ -44,9 +44,9 @@ public class JobExecutor {
     private String host;
 
     /**
-     * 对外监听的端口号，默认是9999
+     * 对外监听的端口号
      */
-    private int port = 9999;
+    private int port;
 
     /**
      * 应用名
@@ -110,11 +110,11 @@ public class JobExecutor {
     }
 
     public void destroy() {
-        if (JobThreadRepository.size() > 0) {
-            for (Map.Entry<Integer, JobThread> item : JobThreadRepository.entrySet()) {
+        if (jobThreadRepository.size() > 0) {
+            for (Map.Entry<Integer, JobThread> item : jobThreadRepository.entrySet()) {
                 removeJobThread(item.getKey(), "Web容器销毁终止");
             }
-            JobThreadRepository.clear();
+            jobThreadRepository.clear();
         }
         stopExecutorServer();
     }
@@ -128,7 +128,7 @@ public class JobExecutor {
         newJobThread.start();
         logger.info(">>>>>>>>>>> xxl-job regist JobThread success, jobId:{}, handler:{}", jobId, handler);
 
-        JobThread oldJobThread = JobThreadRepository.put(jobId, newJobThread);
+        JobThread oldJobThread = jobThreadRepository.put(jobId, newJobThread);
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
@@ -138,7 +138,7 @@ public class JobExecutor {
     }
 
     public static void removeJobThread(int jobId, String removeOldReason) {
-        JobThread oldJobThread = JobThreadRepository.remove(jobId);
+        JobThread oldJobThread = jobThreadRepository.remove(jobId);
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
@@ -153,7 +153,7 @@ public class JobExecutor {
     }
 
     public static JobThread loadJobThread(int jobId) {
-        return JobThreadRepository.get(jobId);
+        return jobThreadRepository.get(jobId);
     }
 
     public void setHost(String host) {

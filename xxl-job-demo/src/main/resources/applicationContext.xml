@@ -24,8 +24,7 @@
     <!-- 配置01、JobHandler 扫描路径 -->
     <context:component-scan base-package="com.xxl.job.executor.service.job"/>
 
-    <schedule:config host="${xxl.job.executor.ip}" port="${xxl.job.executor.port}" appName="${xxl.job.executor.appname}"
-                     adminAddresses="${xxl.job.admin.addresses}" accessToken="" logPath="${xxl.job.executor.logpath}"/>
+    <schedule:config appName="${xxl.job.executor.appname}" adminAddresses="${xxl.job.admin.addresses}"/>
 
 
 </beans>
